@@ -1,8 +1,4 @@
-output.txt
 node_modules
-dist
-.mastra
-.env.development
-.env
-*.db
-*.db-*
+.wrangler
+wrangler.toml
+.dev.vars
