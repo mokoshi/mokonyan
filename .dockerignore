@@ -1,0 +1,26 @@
+# Environment variables
+.env
+.env.*
+
+# Version control
+.git
+.gitignore
+
+# Dependencies
+node_modules
+.pnpm-store
+
+# Development files
+*.log
+*.md
+.vscode
+.idea
+
+# Test files
+__tests__
+*.test.*
+*.spec.*
+
+# Build output
+dist
+build 

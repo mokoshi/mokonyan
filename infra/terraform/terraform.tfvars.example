@@ -1,0 +1,10 @@
+# OpenAI
+openai_api_key = "your-openai-api-key"
+
+# Slack
+slack_signing_secret = "your-signing-secret"
+slack_bot_token      = "your-bot-token"
+
+# Turso
+turso_database_url       = "your-turso-database-url"
+turso_database_auth_token = "your-turso-database-auth-token" 

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "${app_name}",
+    "image": "${repository_url}:latest",
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": ${container_port},
+        "hostPort": ${container_port},
+        "protocol": "tcp"
+      }
+    ],
+    "environment": [
+      {
+        "name": "NODE_ENV",
+        "value": "${environment}"
+      },
+      {
+        "name": "TURSO_DATABASE_URL",
+        "value": "${turso_database_url}"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "SLACK_SIGNING_SECRET",
+        "valueFrom": "${slack_signing_secret_arn}"
+      },
+      {
+        "name": "SLACK_BOT_TOKEN",
+        "valueFrom": "${slack_bot_token_arn}"
+      },
+      {
+        "name": "OPENAI_API_KEY",
+        "valueFrom": "${openai_api_key_arn}"
+      },
+      {
+        "name": "TURSO_DATABASE_AUTH_TOKEN",
+        "valueFrom": "${turso_database_auth_token_arn}"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${log_group_name}",
+        "awslogs-region": "${aws_region}",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
+  }
+]
