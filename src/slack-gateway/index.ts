@@ -14,6 +14,24 @@ const slackApp = new Bolt.App({
         res.end();
       },
     },
+    {
+      path: "/test",
+      method: "GET",
+      handler: async (_req, res) => {
+        res.writeHead(200);
+        let responseText: string;
+        try {
+          const response = await mastra
+            .getAgent("mokonyanAgent")
+            .generate("nintendo switch 2 の発売日は？");
+          responseText = response.text;
+        } catch (error) {
+          console.error("Failed to generate response:", error);
+          responseText = "エラーが発生しちゃったにゃん。。。";
+        }
+        res.write(responseText);
+      }
+    }
   ],
 });
 
