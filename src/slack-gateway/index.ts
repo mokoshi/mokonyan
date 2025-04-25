@@ -6,20 +6,9 @@ const slackApp = new Bolt.App({
   signingSecret: process.env.SLACK_SIGNING_SECRET!,
   customRoutes: [
     {
-      path: "/",
-      method: "GET",
-      handler: (_req, res) => {
-        console.log("Root path accessed");
-        res.writeHead(200, { "Content-Type": "text/plain" });
-        res.write("Mokonyan Slack Gateway is running");
-        res.end();
-      },
-    },
-    {
       path: "/health",
       method: "GET",
       handler: (_req, res) => {
-        console.log("Health check accessed");
         res.writeHead(200);
         res.write("ok");
         res.end();
@@ -29,14 +18,23 @@ const slackApp = new Bolt.App({
 });
 
 slackApp.event("app_mention", async ({ event, say }) => {
-  const response = await mastra.getAgent("mokonyanAgent").generate(event.text, {
-    threadId: `${event.thread_ts ?? event.ts}`,
-    resourceId: "slack-gateway",
-  });
+  let responseText: string;
+  try {
+    const response = await mastra
+      .getAgent("mokonyanAgent")
+      .generate(event.text, {
+        threadId: `${event.thread_ts ?? event.ts}`,
+        resourceId: "slack-gateway",
+      });
+    responseText = response.text;
+  } catch (error) {
+    console.error("Failed to generate response:", error);
+    responseText = "エラーが発生しちゃったにゃん。。。";
+  }
 
   await say({
     thread_ts: event.thread_ts ?? event.ts,
-    text: response.text,
+    text: responseText,
   });
 });
 
