@@ -16,6 +16,12 @@ variable "app_name" {
   default     = "mokonyan"
 }
 
+variable "domain_name" {
+  description = "Base domain name for the application"
+  type        = string
+  default     = "mokoshi.red"
+}
+
 variable "container_port" {
   description = "Port exposed by the container"
   type        = number
@@ -55,9 +61,14 @@ variable "turso_database_auth_token" {
   sensitive   = true
 }
 
-# Domain
-variable "domain_name" {
-  description = "Base domain name for the application"
+variable "google_custom_search_api_key" {
+  description = "Google Custom Search API key"
   type        = string
-  default     = "mokoshi.red"
+  sensitive   = true
+}
+
+variable "google_custom_search_engine_id" {
+  description = "Google Custom Search engine ID"
+  type        = string
+  sensitive   = true
 }
