@@ -8,13 +8,13 @@ on:
 
 env:
   AWS_REGION: ap-northeast-1
-  ECR_REPOSITORY: mokonyan-dev
-  ECS_SERVICE: mokonyan-dev
-  ECS_CLUSTER: mokonyan-dev
-  ECS_TASK_DEFINITION: mokonyan-dev
+  ECR_REPOSITORY: mokonyan
+  LIGHTSAIL_SERVICE: mokonyan-dev
+  CONTAINER_NAME: mokonyan
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,49 +31,48 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine image URI
+        run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build and push image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+          ECR_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          docker buildx build --platform linux/amd64 -t ${ECR_URI}:${IMAGE_TAG} --push .
 
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    environment: production
-
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Download task definition
+      - name: Fetch current Lightsail deployment
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} \
-          --query taskDefinition > task-definition.json
+          aws lightsail get-container-services \
+            --service-name $LIGHTSAIL_SERVICE \
+            --query "containerServices[0].currentDeployment" \
+            --output json > deployment.json
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: mokonyan
-          image: ${{ needs.build-and-push.outputs.image }}
+      - name: Patch image URI in deployment.json
+        env:
+          ECR_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
+        run: |
+          NEW_IMAGE="${ECR_URI}:${IMAGE_TAG}"
+          jq \
+            --arg img "$NEW_IMAGE" \
+            --arg cn "$CONTAINER_NAME" \
+            '.containers[$cn].image = $img' \
+            deployment.json > new-deployment.json
 
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Deploy new container version
+        run: |
+          aws lightsail create-container-service-deployment \
+            --service-name $LIGHTSAIL_SERVICE \
+            --containers $(jq -c '.containers' new-deployment.json) \
+            --public-endpoint $(jq -c '.publicEndpoint' new-deployment.json)

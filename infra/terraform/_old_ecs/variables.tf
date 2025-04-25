@@ -22,6 +22,24 @@ variable "container_port" {
   default     = 3000
 }
 
+variable "cpu" {
+  description = "CPU units for the container"
+  type        = number
+  default     = 256
+}
+
+variable "memory" {
+  description = "Memory for the container in MiB"
+  type        = number
+  default     = 512
+}
+
+variable "desired_count" {
+  description = "Number of tasks to run"
+  type        = number
+  default     = 1
+}
+
 # OpenAI
 variable "openai_api_key" {
   description = "OpenAI API key"
@@ -59,5 +77,4 @@ variable "turso_database_auth_token" {
 variable "domain_name" {
   description = "Base domain name for the application"
   type        = string
-  default     = "mokoshi.red"
 }

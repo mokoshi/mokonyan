@@ -33,3 +33,9 @@ resource "aws_acm_certificate_validation" "main" {
   certificate_arn         = aws_acm_certificate.main.arn
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
+
+# Route53 ゾーンの参照
+data "aws_route53_zone" "main" {
+  name         = var.domain_name
+  private_zone = false
+}

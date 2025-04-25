@@ -39,4 +39,4 @@ ENV PORT=3000
 EXPOSE 3000
 
 # Start the application
-CMD ["node", "dist/slack-gateway/index.js"] 
+CMD ["node", "dist/slack-gateway/index.mjs"] 
