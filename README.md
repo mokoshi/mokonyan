@@ -9,6 +9,7 @@ Mastra を使用した AI エージェントと Slack 連携のプロジェク�
 - TypeScript - 型安全な開発環境
 - [libsql](https://libsql.org/) - データベース（ローカル開発時はファイルベース、本番環境では TURSO を使用）
 - [TURSO](https://turso.tech/) - 本番環境用データベース（libsql のクラウド版）
+- [Google Custom Search API](https://developers.google.com/custom-search/v1/overview) - ウェブ検索機能
 
 ## プロジェクト構成
 
@@ -44,7 +45,18 @@ OPENAI_API_KEY=sk-...
 # データベース設定（本番環境でのみ必要）
 TURSO_DATABASE_URL=https://your-database.turso.io
 TURSO_DATABASE_AUTH_TOKEN=...
+
+# Google Custom Search 設定
+GOOGLE_CUSTOM_SEARCH_API_KEY=...
+GOOGLE_CUSTOM_SEARCH_ENGINE_ID=...
 ```
+
+Google Custom Search API を使用するには、以下の手順が必要です：
+
+1. [Google Cloud Console](https://console.cloud.google.com/) でプロジェクトを作成
+2. Custom Search API を有効化
+3. API キーを作成
+4. [Programmable Search Engine](https://programmablesearchengine.google.com/) で検索エンジンを作成し、エンジン ID を取得
 
 ## 開発
 
