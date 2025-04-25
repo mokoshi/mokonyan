@@ -6,7 +6,7 @@ export const mcp = new MCPConfiguration({
   servers: {
     playwright: {
       command: "npx",
-      args: ["@playwright/mcp@latest"],
+      args: ["@playwright/mcp@latest", "--headless"],
     },
   },
 });

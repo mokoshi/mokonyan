@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "mastra:dev": "mastra dev",
-    "build": "tsx scripts/build-ts.ts"
+    "build": "tsx scripts/build-ts.ts",
+    "postinstall": "npx playwright install-deps chromium"
   },
   "keywords": [],
   "author": "",
