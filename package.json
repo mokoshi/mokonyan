@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "mastra:dev": "mastra dev",
-    "build": "tsx scripts/build-ts.ts",
-    "postinstall": "npx playwright install-deps chromium"
+    "build": "tsx scripts/build-ts.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,14 +15,15 @@
     "@mastra/core": "^0.9.0",
     "@mastra/mcp": "^0.3.10",
     "@mastra/memory": "^0.3.0",
+    "@playwright/mcp": "^0.0.15",
+    "@slack/bolt": "^4.2.1",
     "mastra": "^0.5.0",
-    "zod": "^3.24.3",
-    "@slack/bolt": "^4.2.1"
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
+    "esbuild": "^0.21.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.3",
-    "esbuild": "^0.21.0"
+    "typescript": "^5.8.3"
   }
 }
