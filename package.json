@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "mastra:dev": "mastra dev",
-    "build": "tsx scripts/build-ts.ts"
+    "build": "tsx scripts/build-ts.ts",
+    "sandbox": "cd src/sandbox && tsx --env-file=../../.env"
   },
   "keywords": [],
   "author": "",
@@ -15,8 +16,10 @@
     "@mastra/core": "^0.9.0",
     "@mastra/mcp": "^0.3.10",
     "@mastra/memory": "^0.3.0",
+    "@mastra/rag": "^0.1.19",
     "@playwright/mcp": "^0.0.15",
     "@slack/bolt": "^4.2.1",
+    "ai": "^4.3.10",
     "mastra": "^0.5.0",
     "zod": "^3.24.3"
   },

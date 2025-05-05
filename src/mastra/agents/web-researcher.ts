@@ -1,16 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { Agent } from "@mastra/core/agent";
-import { MCPConfiguration } from "@mastra/mcp";
 import { googleSearchTool } from "../tools/google-search";
-
-export const mcp = new MCPConfiguration({
-  servers: {
-    playwright: {
-      command: "npx",
-      args: ["@playwright/mcp@latest", "--headless", "--browser", "chromium"],
-    },
-  },
-});
+import { mcp } from "../mcp";
 
 export const webResearcherAgent = new Agent({
   name: "Web Researcher Agent",
@@ -25,5 +16,5 @@ export const webResearcherAgent = new Agent({
 4. **倫理的配慮**: 情報の正確性と信頼性を重視し、誤情報を提供しないように注意してください。
 `,
   model: openai("gpt-4o-mini"),
-  tools: {...await mcp.getTools(), googleSearchTool},
+  tools: { ...(await mcp.getTools()), googleSearchTool },
 });
