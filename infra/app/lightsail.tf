@@ -2,13 +2,15 @@ resource "aws_lightsail_container_service" "app" {
   name        = "${var.app_name}-${var.environment}"
   power       = "small"
   scale       = 1
-  is_disabled = false
+  is_disabled = true
 
   private_registry_access {
     ecr_image_puller_role {
       is_active = true
     }
   }
+
+  tags = local.common_tags
 }
 
 # resource "aws_lightsail_container_service_deployment_version" "app" {
